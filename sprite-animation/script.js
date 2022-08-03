@@ -1,3 +1,9 @@
+let playerState = "idle";
+const dropdown = document.getElementById("animations");
+dropdown.addEventListener("change", function (e) {
+  playerState = e.target.value;
+});
+
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
 const CANVAS_WIDTH = (canvas.width = 600);
@@ -7,6 +13,7 @@ const playerImage = new Image();
 playerImage.src = "./assets/shadow_dog.png";
 const spriteWidth = 575;
 const spriteHeight = 523;
+
 let gameFrame = 0;
 const staggerFrames = 5;
 const spriteAnimations = [];
@@ -21,7 +28,7 @@ const animationStates = [
   },
   {
     name: "fall",
-    frames: 9,
+    frames: 7,
   },
   {
     name: "run",
@@ -48,7 +55,7 @@ const animationStates = [
     frames: 12,
   },
   {
-    name: "damage",
+    name: "damaged",
     frames: 4,
   },
 ];
@@ -72,9 +79,10 @@ function animate() {
   // Only returns whole numbers, which works as the position in the sprite row.
   // The six represents the basic length of the first sprite rows.
   let position =
-    Math.floor(gameFrame / staggerFrames) % spriteAnimations["idle"].loc.length;
+    Math.floor(gameFrame / staggerFrames) %
+    spriteAnimations[playerState].loc.length;
   let frameX = spriteWidth * position;
-  let frameY = spriteAnimations["idle"].loc[position].y;
+  let frameY = spriteAnimations[playerState].loc[position].y;
   // The below nine argument version of drawImage cuts out a section of the source and then places it.
   // ctx.drawImage(image, srcX, srcY, srcW, srcH, destX, destY, destW, destH)
   // There are also two and four argument versions.
