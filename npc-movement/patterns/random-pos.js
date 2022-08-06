@@ -33,7 +33,7 @@ class Enemy {
   }
   // Update coordinates for movement
   update() {
-    // New random location every 100 frame updates
+    // New random location based on interval frame updates
     if (gameFrame % this.interval === 0) {
       this.newX = Math.random() * (canvas.width - this.width);
       this.newY = Math.random() * (canvas.height - this.height);
