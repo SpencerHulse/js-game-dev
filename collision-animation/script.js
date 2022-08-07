@@ -18,12 +18,15 @@ class Explosion {
     this.y = y;
     this.image = new Image();
     this.image.src = "./assets/boom.png";
+    this.sound = new Audio();
+    this.sound.src = "./assets/boom.wav";
     this.frame = 0;
     this.timer = 0;
     // Based on radian
     this.angle = Math.random() * 6.2;
   }
   update() {
+    if (this.timer === 0) this.sound.play();
     this.timer++;
     if (this.timer % 10 === 0) this.frame++;
   }
