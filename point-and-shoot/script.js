@@ -27,15 +27,30 @@ class Raven {
     this.markedForDeletion = false;
     this.image = new Image();
     this.image.src = "./assets/raven.png";
+    this.frame = 0;
+    this.maxFrame = 4;
+    this.timeSinceFlap = 0;
+    // Flap speed determined, in part, by horizontal movement speed
+    this.flapInterval = 400 / this.directionX;
   }
-  update() {
+  update(deltatime) {
+    if (this.y < 0 || this.y > canvas.height - this.height) {
+      this.directionY = this.directionY * -1;
+    }
     this.x -= this.directionX;
+    this.y += this.directionY;
     if (this.x < 0 - this.width) this.markedForDeletion = true;
+    this.timeSinceFlap += deltatime;
+    if (this.timeSinceFlap > this.flapInterval) {
+      if (this.frame > this.maxFrame) this.frame = 0;
+      else this.frame++;
+      this.timeSinceFlap = 0;
+    }
   }
   draw() {
     ctx.drawImage(
       this.image,
-      0,
+      this.frame * this.spriteWidth,
       0,
       this.spriteWidth,
       this.spriteHeight,
@@ -59,7 +74,7 @@ function animate(timestamp) {
     timeToNextRaven = 0;
   }
   // Array literal is used by only having an array
-  [...ravens].forEach((raven) => raven.update());
+  [...ravens].forEach((raven) => raven.update(deltatime));
   [...ravens].forEach((raven) => raven.draw());
   // Only keeps ravens that are not marked for deletion
   ravens = ravens.filter((raven) => raven.markedForDeletion === false);
