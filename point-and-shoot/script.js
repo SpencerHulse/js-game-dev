@@ -7,6 +7,7 @@ const collisionCtx = collisionCanvas.getContext("2d");
 collisionCanvas.width = window.innerWidth;
 collisionCanvas.height = window.innerHeight;
 let score = 0;
+let gameOver = false;
 ctx.font = "50px Impact";
 
 // Counter
@@ -66,6 +67,7 @@ class Raven {
       else this.frame++;
       this.timeSinceFlap = 0;
     }
+    if (this.x < 0 - this.width) gameOver = true;
   }
   draw() {
     collisionCtx.fillStyle = this.color;
@@ -84,6 +86,47 @@ class Raven {
   }
 }
 
+let explosions = [];
+class Explosion {
+  constructor(x, y, size) {
+    this.image = new Image();
+    this.image.src = "./assets/boom.png";
+    this.spriteWidth = 200;
+    this.spriteHeight = 179;
+    this.size = size;
+    this.x = x;
+    this.y = y;
+    this.frame = 0;
+    this.sound = new Audio();
+    this.sound.src = "./assets/boom.wav";
+    this.timeSinceLastFrame = 0;
+    this.frameInterval = 200;
+    this.markedForDeletion = false;
+  }
+  update(deltatime) {
+    if (this.frame === 0) this.sound.play();
+    this.timeSinceLastFrame += deltatime;
+    if (this.timeSinceLastFrame > this.frameInterval) {
+      this.frame++;
+      this.timeSinceLastFrame = 0;
+      if (this.frame > 5) this.markedForDeletion = true;
+    }
+  }
+  draw() {
+    ctx.drawImage(
+      this.image,
+      this.frame * this.spriteWidth,
+      0,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x,
+      this.y - this.size * 0.25,
+      this.size,
+      this.size
+    );
+  }
+}
+
 function drawScore() {
   // The two versions provide a shadow effect
   ctx.fillStyle = "black";
@@ -92,10 +135,25 @@ function drawScore() {
   ctx.fillText("Score: " + score, 55, 80);
 }
 
+function drawGameOver() {
+  ctx.textAlign = "center";
+  ctx.fillStyle = "black";
+  ctx.fillText(
+    "GAME OVER, your score is " + score,
+    canvas.width * 0.5,
+    canvas.height * 0.5
+  );
+  ctx.fillStyle = "white";
+  ctx.fillText(
+    "GAME OVER, your score is " + score,
+    canvas.width * 0.5 + 5,
+    canvas.height * 0.5 + 5
+  );
+}
+
 window.addEventListener("click", (e) => {
   // Gets data of the pixel clicked (x, y, width, height)
   const detectPixelColor = collisionCtx.getImageData(e.x, e.y, 1, 1);
-  console.log(detectPixelColor);
   // Retrieve the color of what was clicked
   const pixelColor = detectPixelColor.data;
   ravens.forEach((raven) => {
@@ -104,8 +162,10 @@ window.addEventListener("click", (e) => {
       raven.randomColors[1] === pixelColor[1] &&
       raven.randomColors[2] === pixelColor[2]
     ) {
+      // Collision detected
       raven.markedForDeletion = true;
       score++;
+      explosions.push(new Explosion(raven.x, raven.y, raven.width));
     }
   });
 });
@@ -129,11 +189,15 @@ function animate(timestamp) {
   // Before ravens to be behind them
   drawScore();
   // Array literal is used by only having an array
-  [...ravens].forEach((raven) => raven.update(deltatime));
-  [...ravens].forEach((raven) => raven.draw());
+  [...ravens, ...explosions].forEach((object) => object.update(deltatime));
+  [...ravens, ...explosions].forEach((object) => object.draw());
   // Only keeps ravens that are not marked for deletion
-  ravens = ravens.filter((raven) => raven.markedForDeletion === false);
-  requestAnimationFrame(animate);
+  ravens = ravens.filter((object) => object.markedForDeletion === false);
+  explosions = explosions.filter(
+    (object) => object.markedForDeletion === false
+  );
+  if (!gameOver) requestAnimationFrame(animate);
+  else drawGameOver();
 }
 // Without a starting timestamp value, it is NaN
 animate(0);
