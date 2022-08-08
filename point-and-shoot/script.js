@@ -53,6 +53,7 @@ class Raven {
       "," +
       +this.randomColors[2] +
       ")";
+    this.hasTrail = Math.random() > 0.5;
   }
   update(deltatime) {
     if (this.y < 0 || this.y > canvas.height - this.height) {
@@ -66,6 +67,10 @@ class Raven {
       if (this.frame > this.maxFrame) this.frame = 0;
       else this.frame++;
       this.timeSinceFlap = 0;
+      if (this.hasTrail)
+        for (let i = 0; i < 3; i++) {
+          particles.push(new Particle(this.x, this.y, this.width, this.color));
+        }
     }
     if (this.x < 0 - this.width) gameOver = true;
   }
@@ -124,6 +129,37 @@ class Explosion {
       this.size,
       this.size
     );
+  }
+}
+
+let particles = [];
+class Particle {
+  constructor(x, y, size, color) {
+    this.size = size;
+    this.x = x + this.size / 2 + Math.random() * 50 - 25;
+    this.y = y + this.size / 3;
+    this.radius = Math.random() * (this.size / 10);
+    this.maxRadius = Math.random() * 20 + 35;
+    this.markedForDeletion = false;
+    this.speedX = Math.random() * 1 + 0.5;
+    this.color = color;
+  }
+  update() {
+    this.x += this.speedX;
+    this.radius += 0.5;
+    // The subtraction of five stops the bug of particles when they grow larger than max radius
+    // The bug: full opacity before deletion
+    if (this.radius > this.maxRadius - 5) this.markedForDeletion = true;
+  }
+  draw() {
+    // Save and restore makes the globalAlpha only work on the trail
+    ctx.save();
+    ctx.globalAlpha = 1 - this.radius / this.maxRadius;
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 }
 
@@ -189,13 +225,17 @@ function animate(timestamp) {
   // Before ravens to be behind them
   drawScore();
   // Array literal is used by only having an array
-  [...ravens, ...explosions].forEach((object) => object.update(deltatime));
-  [...ravens, ...explosions].forEach((object) => object.draw());
+  // Particles come first so they are placed behind the ravens
+  [...particles, ...ravens, ...explosions].forEach((object) =>
+    object.update(deltatime)
+  );
+  [...particles, ...ravens, ...explosions].forEach((object) => object.draw());
   // Only keeps ravens that are not marked for deletion
   ravens = ravens.filter((object) => object.markedForDeletion === false);
   explosions = explosions.filter(
     (object) => object.markedForDeletion === false
   );
+  particles = particles.filter((object) => object.markedForDeletion === false);
   if (!gameOver) requestAnimationFrame(animate);
   else drawGameOver();
 }
