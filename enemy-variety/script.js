@@ -11,9 +11,9 @@ window.addEventListener("load", () => {
       this.width = width;
       this.height = height;
       this.enemies = [];
-      this.enemyInterval = 1000;
+      this.enemyInterval = 500;
       this.enemyTimer = 0;
-      this.enemyTypes = ["worm", "ghost"];
+      this.enemyTypes = ["worm", "ghost", "spider"];
     }
     update(deltaTime) {
       this.enemies = this.enemies.filter((object) => !object.markedForDeletion);
@@ -35,6 +35,7 @@ window.addEventListener("load", () => {
       // Passing this passes everything from the class
       if (randomEnemy === "worm") this.enemies.push(new Worm(this));
       else if (randomEnemy === "ghost") this.enemies.push(new Ghost(this));
+      else if (randomEnemy === "spider") this.enemies.push(new Spider(this));
       this.enemies.sort((a, b) => {
         // Worms at the top of the screen are drawn first
         return a.y - b.y;
@@ -97,18 +98,51 @@ window.addEventListener("load", () => {
       // Horizontal (x) Velocity
       this.vx = Math.random() * 0.2 + 0.1;
       this.angle = 0;
+      this.curve = Math.random() * 3;
     }
     update(deltaTime) {
       super.update(deltaTime);
-      this.y += Math.sin(this.angle);
+      this.y += Math.sin(this.angle) * this.curve;
+      this.angle += 0.04;
     }
-    draw() {
+    draw(ctx) {
       // Extra exclusive to ghost
       ctx.save();
       ctx.globalAlpha = 0.7;
       // Brings in the draw from Enemy instead of overwriting it
       super.draw(ctx);
       ctx.restore();
+    }
+  }
+
+  class Spider extends Enemy {
+    constructor(game) {
+      super(game);
+      this.spriteWidth = 310;
+      this.spriteHeight = 175;
+      this.width = this.spriteWidth / 2;
+      this.height = this.spriteHeight / 2;
+      this.x = Math.random() * (this.game.width - this.width);
+      this.y = 0 - this.height;
+      // Directly accessing the image with the id worm from the HTML
+      this.image = spider;
+      // Horizontal (x) Velocity
+      this.vx = 0;
+      this.vy = Math.random() * 0.1 + 0.1;
+      this.maxLength = Math.random() * game.height;
+    }
+    update(deltaTime) {
+      super.update(deltaTime);
+      this.y += this.vy * deltaTime;
+      // Changes direction
+      if (this.y > this.maxLength) this.vy *= -1;
+    }
+    draw(ctx) {
+      ctx.beginPath();
+      ctx.moveTo(this.x + this.width / 2, 0);
+      ctx.lineTo(this.x + this.width / 2, this.y + 10);
+      ctx.stroke();
+      super.draw(ctx);
     }
   }
 
