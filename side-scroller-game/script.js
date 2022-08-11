@@ -3,6 +3,7 @@ window.addEventListener("load", () => {
   const ctx = canvas.getContext("2d");
   canvas.width = 800;
   canvas.height = 720;
+  enemies = [];
 
   // Apply event listeners to keyboard events and hold an array of active keys
   class InputHandler {
@@ -42,8 +43,6 @@ window.addEventListener("load", () => {
       this.gameHeight = gameHeight;
       this.width = 200;
       this.height = 200;
-      this.spriteWidth = this.width;
-      this.spriteHeight = this.height;
       this.x = 0;
       this.y = this.gameHeight - this.height;
       this.image = playerImage;
@@ -58,10 +57,10 @@ window.addEventListener("load", () => {
       context.fillRect(this.x, this.y, this.width, this.height);
       context.drawImage(
         this.image,
-        this.spriteWidth * this.frameX,
-        this.spriteHeight * this.frameY,
-        this.spriteWidth,
-        this.spriteHeight,
+        this.width * this.frameX,
+        this.height * this.frameY,
+        this.width,
+        this.height,
         this.x,
         this.y,
         this.width,
@@ -134,10 +133,44 @@ window.addEventListener("load", () => {
   }
 
   // Generates enemies
-  class Enemy {}
+  class Enemy {
+    constructor(gameWidth, gameHeight) {
+      this.gameWidth = gameWidth;
+      this.gameHeight = gameHeight;
+      this.width = 160;
+      this.height = 119;
+      this.image = enemyImage;
+      // Puts the image right off screen to the right
+      this.x = this.gameWidth;
+      this.y = this.gameHeight - this.height;
+      this.frameX = 0;
+    }
+    draw(context) {
+      context.drawImage(
+        this.image,
+        this.width * this.frameX,
+        0,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
+    }
+    update() {
+      this.x -= 1;
+    }
+  }
 
   // Responsible for the multiple enemies in the game - adding, updating, and removing
-  function handleEnemies() {}
+  enemies.push(new Enemy(canvas.width, canvas.height));
+  function handleEnemies() {
+    enemies.forEach((enemy) => {
+      enemy.draw(ctx);
+      enemy.update();
+    });
+  }
 
   // Handles things like displaying score and game over message
   function displayStatusText() {}
@@ -145,6 +178,7 @@ window.addEventListener("load", () => {
   const input = new InputHandler();
   const player = new Player(canvas.width, canvas.height);
   const background = new Background(canvas.width, canvas.height);
+  const enemy1 = new Enemy(canvas.width, canvas.height);
 
   // Takes care of endlessly animating the game
   function animate() {
@@ -153,6 +187,7 @@ window.addEventListener("load", () => {
     background.update();
     player.draw(ctx);
     player.update(input);
+    handleEnemies();
     requestAnimationFrame(animate);
   }
   animate();
