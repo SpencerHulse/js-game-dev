@@ -103,7 +103,35 @@ window.addEventListener("load", () => {
   }
 
   // Handles endlessly scrolling background
-  class Background {}
+  class Background {
+    constructor(gameWidth, gameHeight) {
+      this.gameWidth = gameWidth;
+      this.gameHeight = gameHeight;
+      this.image = backgroundImage;
+      this.x = 0;
+      this.y = 0;
+      this.width = 2400;
+      this.height = 720;
+      this.speed = 10;
+    }
+    draw(context) {
+      // Two images, with the second coming right after the 1st
+      // When you reach the second image, it resets, giving the illusion of an endless map
+      context.drawImage(this.image, this.x, this.y, this.width, this.height);
+      // Account for width and the speed to ensure no gaps exist
+      context.drawImage(
+        this.image,
+        this.x + this.width - this.speed,
+        this.y,
+        this.width,
+        this.height
+      );
+    }
+    update() {
+      this.x -= this.speed;
+      if (this.x < 0 - this.width) this.x = 0;
+    }
+  }
 
   // Generates enemies
   class Enemy {}
@@ -116,10 +144,13 @@ window.addEventListener("load", () => {
 
   const input = new InputHandler();
   const player = new Player(canvas.width, canvas.height);
+  const background = new Background(canvas.width, canvas.height);
 
   // Takes care of endlessly animating the game
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    background.draw(ctx);
+    background.update();
     player.draw(ctx);
     player.update(input);
     requestAnimationFrame(animate);
