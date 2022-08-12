@@ -59,6 +59,7 @@ window.addEventListener("load", () => {
       this.weight = 1;
     }
     draw(context) {
+      /* Hitbox examples      
       // Rectangle hitbox
       context.strokeStyle = "white";
       context.strokeRect(this.x, this.y, this.width, this.height);
@@ -71,7 +72,7 @@ window.addEventListener("load", () => {
         0,
         Math.PI * 2
       );
-      context.stroke();
+      context.stroke(); */
       // Sprite
       context.drawImage(
         this.image,
@@ -89,8 +90,8 @@ window.addEventListener("load", () => {
       // Collision detection
       enemies.forEach((enemy) => {
         // Distance between center points of the two circles
-        const dx = enemy.x - this.x;
-        const dy = enemy.y - this.y;
+        const dx = enemy.x + enemy.width / 2 - (this.x + this.width / 2);
+        const dy = enemy.y + enemy.height / 2 - (this.y + this.height / 2);
         // Pythagorean Theorem
         const distance = Math.sqrt(dx * dx + dy * dy);
         // Then compare the distance with the radius of circles 1 and 2 to detect collision
@@ -194,18 +195,6 @@ window.addEventListener("load", () => {
       this.markedForDeletion = false;
     }
     draw(context) {
-      context.strokeStyle = "white";
-      context.strokeRect(this.x, this.y, this.width, this.height);
-      // Circle hitbox
-      context.beginPath();
-      context.arc(
-        this.x + this.width / 2,
-        this.y + this.height / 2,
-        this.width / 2,
-        0,
-        Math.PI * 2
-      );
-      context.stroke();
       context.drawImage(
         this.image,
         this.width * this.frameX,
