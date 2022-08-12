@@ -165,6 +165,7 @@ window.addEventListener("load", () => {
       // 1000 milliseconds / fps
       this.frameInterval = 1000 / this.fps;
       this.speed = 8;
+      this.markedForDeletion = false;
     }
     draw(context) {
       context.drawImage(
@@ -180,6 +181,7 @@ window.addEventListener("load", () => {
       );
     }
     update(deltaTime) {
+      // Sprite animation speed
       if (this.frameTimer > this.frameInterval) {
         if (this.frameX >= this.maxFrame) this.frameX = 0;
         else this.frameX++;
@@ -187,23 +189,31 @@ window.addEventListener("load", () => {
       } else {
         this.frameTimer += deltaTime;
       }
+      // Horizontal movement speed
       this.x -= this.speed;
+      // Deletion
+      if (this.x < 0 - this.width) this.markedForDeletion = true;
     }
   }
 
   // Responsible for the multiple enemies in the game - adding, updating, and removing
   function handleEnemies(deltaTime) {
+    // Enemy spawn logic
     if (enemyTimer > enemyInterval + randomEnemyInterval) {
       enemies.push(new Enemy(canvas.width, canvas.height));
+      console.log(enemies);
       randomEnemyInterval = Math.random() * 1000 + 500;
       enemyTimer = 0;
     } else {
       enemyTimer += deltaTime;
     }
+    // Draws and updates
     enemies.forEach((enemy) => {
       enemy.draw(ctx);
       enemy.update(deltaTime);
     });
+    // Filter enemies marked for deletion
+    enemies = enemies.filter((enemy) => enemy.markedForDeletion === false);
   }
 
   // Handles things like displaying score and game over message
