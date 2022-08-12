@@ -5,6 +5,7 @@ window.addEventListener("load", () => {
   canvas.height = 720;
   let enemies = [];
   let score = 0;
+  let gameOver = false;
 
   // Apply event listeners to keyboard events and hold an array of active keys
   class InputHandler {
@@ -58,8 +59,20 @@ window.addEventListener("load", () => {
       this.weight = 1;
     }
     draw(context) {
-      // context.fillStyle = "white";
-      // context.fillRect(this.x, this.y, this.width, this.height);
+      // Rectangle hitbox
+      context.strokeStyle = "white";
+      context.strokeRect(this.x, this.y, this.width, this.height);
+      // Circle hitbox
+      context.beginPath();
+      context.arc(
+        this.x + this.width / 2,
+        this.y + this.height / 2,
+        this.width / 2,
+        0,
+        Math.PI * 2
+      );
+      context.stroke();
+      // Sprite
       context.drawImage(
         this.image,
         this.width * this.frameX,
@@ -72,7 +85,19 @@ window.addEventListener("load", () => {
         this.height
       );
     }
-    update(input, deltaTime) {
+    update(input, deltaTime, enemies) {
+      // Collision detection
+      enemies.forEach((enemy) => {
+        // Distance between center points of the two circles
+        const dx = enemy.x - this.x;
+        const dy = enemy.y - this.y;
+        // Pythagorean Theorem
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Then compare the distance with the radius of circles 1 and 2 to detect collision
+        if (distance < enemy.width / 2 + this.width / 2) {
+          gameOver = true;
+        }
+      });
       // Sprite animation
       if (this.frameTimer > this.frameInterval) {
         if (this.frameX >= this.maxFrame) this.frameX = 0;
@@ -169,6 +194,18 @@ window.addEventListener("load", () => {
       this.markedForDeletion = false;
     }
     draw(context) {
+      context.strokeStyle = "white";
+      context.strokeRect(this.x, this.y, this.width, this.height);
+      // Circle hitbox
+      context.beginPath();
+      context.arc(
+        this.x + this.width / 2,
+        this.y + this.height / 2,
+        this.width / 2,
+        0,
+        Math.PI * 2
+      );
+      context.stroke();
       context.drawImage(
         this.image,
         this.width * this.frameX,
@@ -228,6 +265,13 @@ window.addEventListener("load", () => {
     context.fillText("Score: " + score, 20, 50);
     context.fillStyle = "white";
     context.fillText("Score: " + score, 22, 52);
+    if (gameOver) {
+      context.textAlign = "center";
+      context.fillStyle = "black";
+      context.fillText("GAME OVER, try again!", canvas.width / 2, 200);
+      context.fillStyle = "white";
+      context.fillText("GAME OVER, try again!", canvas.width / 2 + 2, 202);
+    }
   }
 
   const input = new InputHandler();
@@ -247,10 +291,10 @@ window.addEventListener("load", () => {
     background.draw(ctx);
     // background.update();
     player.draw(ctx);
-    player.update(input, deltaTime);
+    player.update(input, deltaTime, enemies);
     handleEnemies(deltaTime);
     displayStatusText(ctx, score);
-    requestAnimationFrame(animate);
+    if (!gameOver) requestAnimationFrame(animate);
   }
   animate(0);
 });
