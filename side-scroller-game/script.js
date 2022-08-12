@@ -22,6 +22,8 @@ window.addEventListener("load", () => {
           this.keys.indexOf(e.key) === -1
         ) {
           this.keys.push(e.key);
+        } else if (e.key === "Enter" && gameOver) {
+          restartGame();
         }
       });
       window.addEventListener("keyup", (e) => {
@@ -45,7 +47,7 @@ window.addEventListener("load", () => {
       this.gameHeight = gameHeight;
       this.width = 200;
       this.height = 200;
-      this.x = 0;
+      this.x = 100;
       this.y = this.gameHeight - this.height;
       this.image = playerImage;
       this.frameX = 0;
@@ -57,6 +59,13 @@ window.addEventListener("load", () => {
       this.speed = 0;
       this.vy = 0;
       this.weight = 1;
+    }
+    restart() {
+      this.x = 100;
+      this.y = this.gameHeight - this.height;
+      this.frameX = 0;
+      this.maxFrame = 8;
+      this.frameY = 0;
     }
     draw(context) {
       /* Hitbox examples      
@@ -155,6 +164,9 @@ window.addEventListener("load", () => {
       this.height = 720;
       this.speed = 10;
     }
+    restart() {
+      this.x = 0;
+    }
     draw(context) {
       // Two images, with the second coming right after the 1st
       // When you reach the second image, it resets, giving the illusion of an endless map
@@ -247,6 +259,7 @@ window.addEventListener("load", () => {
 
   // Handles things like displaying score and game over message
   function displayStatusText(context, score) {
+    context.textAlign = "left";
     context.font = "40px Helvetica";
     // Manual shadow since Firefox does not work well with built-in shadow property
     context.fillStyle = "black";
@@ -256,10 +269,27 @@ window.addEventListener("load", () => {
     if (gameOver) {
       context.textAlign = "center";
       context.fillStyle = "black";
-      context.fillText("GAME OVER, try again!", canvas.width / 2, 200);
+      context.fillText(
+        "GAME OVER, press Enter to try again!",
+        canvas.width / 2,
+        200
+      );
       context.fillStyle = "white";
-      context.fillText("GAME OVER, try again!", canvas.width / 2 + 2, 202);
+      context.fillText(
+        "GAME OVER, press Enter to try again!",
+        canvas.width / 2 + 2,
+        202
+      );
     }
+  }
+
+  function restartGame() {
+    player.restart();
+    background.restart();
+    enemies = [];
+    score = 0;
+    gameOver = false;
+    animate(0);
   }
 
   const input = new InputHandler();
