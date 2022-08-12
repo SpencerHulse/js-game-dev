@@ -123,13 +123,13 @@ window.addEventListener("load", () => {
     update(input, deltaTime, enemies) {
       // Collision detection
       enemies.forEach((enemy) => {
-        // Distance between center points of the two circles
-        const dx = enemy.x + enemy.width / 2 - (this.x + this.width / 2);
-        const dy = enemy.y + enemy.height / 2 - (this.y + this.height / 2);
+        // Distance between center points of the two circles (adjusted for accuracy)
+        const dx = enemy.x + enemy.width / 2 - 20 - (this.x + this.width / 2);
+        const dy = enemy.y + enemy.height / 2 - (this.y + this.height / 2 + 20);
         // Pythagorean Theorem
         const distance = Math.sqrt(dx * dx + dy * dy);
         // Then compare the distance with the radius of circles 1 and 2 to detect collision
-        if (distance < enemy.width / 2 + this.width / 2) {
+        if (distance < enemy.width / 3 + this.width / 3) {
           gameOver = true;
         }
       });
@@ -322,8 +322,6 @@ window.addEventListener("load", () => {
   }
 
   function toggleFullscreen() {
-    console.log(document.fullscreenElement);
-    console.log(fullScreenButton);
     if (!document.fullscreenElement) {
       canvas.requestFullscreen().catch((err) => {
         alert(`Error, can't enable fullscreen mode: ${err.message}`);
