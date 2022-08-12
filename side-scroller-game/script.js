@@ -3,7 +3,8 @@ window.addEventListener("load", () => {
   const ctx = canvas.getContext("2d");
   canvas.width = 800;
   canvas.height = 720;
-  enemies = [];
+  let enemies = [];
+  let score = 0;
 
   // Apply event listeners to keyboard events and hold an array of active keys
   class InputHandler {
@@ -192,7 +193,10 @@ window.addEventListener("load", () => {
       // Horizontal movement speed
       this.x -= this.speed;
       // Deletion
-      if (this.x < 0 - this.width) this.markedForDeletion = true;
+      if (this.x < 0 - this.width) {
+        this.markedForDeletion = true;
+        score++;
+      }
     }
   }
 
@@ -217,7 +221,14 @@ window.addEventListener("load", () => {
   }
 
   // Handles things like displaying score and game over message
-  function displayStatusText() {}
+  function displayStatusText(context, score) {
+    context.font = "40px Helvetica";
+    // Manual shadow since Firefox does not work well with built-in shadow property
+    context.fillStyle = "black";
+    context.fillText("Score: " + score, 20, 50);
+    context.fillStyle = "white";
+    context.fillText("Score: " + score, 22, 52);
+  }
 
   const input = new InputHandler();
   const player = new Player(canvas.width, canvas.height);
@@ -238,6 +249,7 @@ window.addEventListener("load", () => {
     player.draw(ctx);
     player.update(input, deltaTime);
     handleEnemies(deltaTime);
+    displayStatusText(ctx, score);
     requestAnimationFrame(animate);
   }
   animate(0);
