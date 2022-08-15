@@ -7,6 +7,8 @@ import {
   RunningRight,
   JumpingLeft,
   JumpingRight,
+  FallingLeft,
+  FallingRight,
 } from "./State.js";
 
 export default class Player {
@@ -23,6 +25,8 @@ export default class Player {
       new RunningRight(this),
       new JumpingLeft(this),
       new JumpingRight(this),
+      new FallingLeft(this),
+      new FallingRight(this),
     ];
     this.currentState = this.states[1];
     this.image = dogImage;
