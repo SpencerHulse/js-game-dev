@@ -25,6 +25,7 @@ export class StandingLeft extends State {
   // What needs to be done when the player enters this state
   enter() {
     this.player.frameY = 1;
+    this.player.speed = 0;
   }
   // Listens for inputs and swaps to a different state when needed
   handleInput(input) {
@@ -41,6 +42,7 @@ export class StandingRight extends State {
   }
   enter() {
     this.player.frameY = 0;
+    this.player.speed = 0;
   }
   handleInput(input) {
     if (input === "PRESS left") this.player.setState(states.RUNNING_LEFT);
@@ -57,6 +59,7 @@ export class SittingLeft extends State {
   }
   enter() {
     this.player.frameY = 9;
+    this.player.speed = 0;
   }
   handleInput(input) {
     if (input === "PRESS right") this.player.setState(states.SITTING_RIGHT);
@@ -72,6 +75,7 @@ export class SittingRight extends State {
   }
   enter() {
     this.player.frameY = 8;
+    this.player.speed = 0;
   }
   handleInput(input) {
     if (input === "PRESS left") this.player.setState(states.SITTING_LEFT);
@@ -87,6 +91,7 @@ export class RunningLeft extends State {
   }
   enter() {
     this.player.frameY = 7;
+    this.player.speed = -this.player.maxSpeed;
   }
   handleInput(input) {
     if (input === "PRESS right") this.player.setState(states.RUNNING_RIGHT);
@@ -103,6 +108,7 @@ export class RunningRight extends State {
   }
   enter() {
     this.player.frameY = 6;
+    this.player.speed = this.player.maxSpeed;
   }
   handleInput(input) {
     if (input === "PRESS left") this.player.setState(states.RUNNING_LEFT);
