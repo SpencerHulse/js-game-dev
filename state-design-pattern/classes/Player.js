@@ -1,8 +1,11 @@
+import { StandingLeft, StandingRight } from "./State.js";
+
 export default class Player {
   constructor(gameWidth, gameHeight) {
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
-    this.states = [];
+    // Linked with the states const in State.js
+    this.states = [new StandingLeft(), new StandingRight()];
     this.currentState = this.states[0];
     this.image = dogImage;
     this.width = 200;
@@ -24,5 +27,9 @@ export default class Player {
       this.width,
       this.height
     );
+  }
+  setState(state) {
+    this.currentState = this.state[state];
+    this.currentState.enter();
   }
 }
