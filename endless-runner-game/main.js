@@ -1,4 +1,5 @@
 import { Player } from "./classes/Player.js";
+import { Input } from "./classes/Input.js";
 
 window.addEventListener("load", () => {
   const canvas = canvas1;
@@ -11,9 +12,10 @@ window.addEventListener("load", () => {
       this.width = width;
       this.height = height;
       this.player = new Player(this);
+      this.input = new Input();
     }
     update() {
-      this.player.update();
+      this.player.update(this.input.keys);
     }
     draw() {
       this.player.draw(ctx);
