@@ -1,3 +1,5 @@
+import { Sitting } from "./PlayerState.js";
+
 export class Player {
   constructor(game) {
     this.game = game;
@@ -10,6 +12,9 @@ export class Player {
     this.image = player;
     this.speed = 0;
     this.maxSpeed = 10;
+    this.states = [new Sitting(this)];
+    this.currentState = this.states[0];
+    this.currentState.enter();
   }
   update(input) {
     // Horizontal Speed
