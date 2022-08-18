@@ -13,6 +13,10 @@ export class Player {
     this.speed = 0;
     this.frameX = 0;
     this.frameY = 0;
+    this.maxFrame = 5;
+    this.fps = 20;
+    this.frameInterval = 1000 / this.fps;
+    this.frameTimer = 0;
     this.maxSpeed = 10;
     this.states = [
       new Sitting(this),
@@ -23,7 +27,7 @@ export class Player {
     this.currentState = this.states[0];
     this.currentState.enter();
   }
-  update(input) {
+  update(input, deltaTime) {
     this.currentState.handleInput(input);
     // Horizontal Speed
     this.x += this.speed;
@@ -37,6 +41,14 @@ export class Player {
     this.y += this.vy;
     if (!this.onGround()) this.vy += this.weight;
     else this.vy = 0;
+    // Sprite Animation
+    if (this.frameTimer > this.frameInterval) {
+      this.frameTimer = 0;
+      if (this.frameX < this.maxFrame) this.frameX++;
+      else this.frameX = 0;
+    } else {
+      this.frameTimer += deltaTime;
+    }
   }
   draw(context) {
     context.drawImage(
