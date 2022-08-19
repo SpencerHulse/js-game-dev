@@ -1,5 +1,6 @@
 import { Player } from "./classes/Player.js";
 import { Input } from "./classes/Input.js";
+import { Background } from "./classes/Background.js";
 
 window.addEventListener("load", () => {
   const canvas = canvas1;
@@ -11,13 +12,18 @@ window.addEventListener("load", () => {
     constructor(width, height) {
       this.width = width;
       this.height = height;
+      this.groundMargin = 80;
+      this.speed = 3; // Three pixels per frame
+      this.background = new Background(this);
       this.player = new Player(this);
       this.input = new Input();
     }
     update(deltaTime) {
+      this.background.update();
       this.player.update(this.input.keys, deltaTime);
     }
     draw() {
+      this.background.draw(ctx);
       this.player.draw(ctx);
     }
   }
