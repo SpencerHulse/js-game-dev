@@ -1,6 +1,7 @@
 export class Input {
-  constructor() {
+  constructor(game) {
     this.keys = [];
+    this.game = game;
     window.addEventListener("keydown", (e) => {
       const key = e.key;
       if (
@@ -12,6 +13,8 @@ export class Input {
         this.keys.indexOf(key) === -1
       ) {
         this.keys.push(key);
+      } else if (e.key === "d") {
+        this.game.debug = !this.game.debug;
       }
     });
     window.addEventListener("keyup", (e) => {
