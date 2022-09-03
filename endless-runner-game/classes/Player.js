@@ -5,7 +5,10 @@ import {
   Falling,
   Rolling,
   Diving,
+  Hit,
 } from "./PlayerStates.js";
+
+import { CollisionAnimation } from "./CollisionAnimation.js";
 
 export class Player {
   constructor(game) {
@@ -32,6 +35,7 @@ export class Player {
       new Falling(this.game),
       new Rolling(this.game),
       new Diving(this.game),
+      new Hit(this.game),
     ];
   }
   update(input, deltaTime) {
@@ -95,8 +99,21 @@ export class Player {
         enemy.y + enemy.height > this.y
       ) {
         enemy.markedForDeletion = true;
-        this.game.score++;
-      } else {
+        this.game.collisions.push(
+          new CollisionAnimation(
+            this.game,
+            enemy.x + enemy.width * 0.5,
+            enemy.y + enemy.height * 0.5
+          )
+        );
+        if (
+          this.currentState === this.states[4] ||
+          this.currentState === this.states[5]
+        ) {
+          this.game.score++;
+        } else {
+          this.setState(6, 0);
+        }
       }
     });
   }
