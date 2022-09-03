@@ -22,6 +22,7 @@ window.addEventListener("load", () => {
       this.input = new Input(this);
       this.UI = new UI(this);
       this.enemies = [];
+      this.particles = [];
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.debug = false;
@@ -45,12 +46,20 @@ window.addEventListener("load", () => {
         if (enemy.markedForDeletion)
           this.enemies.splice(this.enemies.indexOf(enemy), 1);
       });
+      // Handle Particles
+      this.particles.forEach((particle, index) => {
+        particle.update();
+        if (particle.markedForDeletion) this.particles.splice(index, 1);
+      });
     }
     draw() {
       this.background.draw(ctx);
       this.player.draw(ctx);
       this.enemies.forEach((enemy) => {
         enemy.draw(ctx);
+      });
+      this.particles.forEach((particle) => {
+        particle.draw(ctx);
       });
       this.UI.draw(ctx);
     }
