@@ -2,6 +2,7 @@ import { Player } from "./classes/Player.js";
 import { Input } from "./classes/Input.js";
 import { Background } from "./classes/Background.js";
 import { FlyingEnemy, GroundEnemy, ClimbingEnemy } from "./classes/Enemies.js";
+import { UI } from "./classes/UI.js";
 
 window.addEventListener("load", () => {
   const canvas = canvas1;
@@ -19,10 +20,13 @@ window.addEventListener("load", () => {
       this.background = new Background(this);
       this.player = new Player(this);
       this.input = new Input(this);
+      this.UI = new UI(this);
       this.enemies = [];
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.debug = false;
+      this.score = 0;
+      this.fontColor = "black";
     }
     update(deltaTime) {
       this.background.update();
@@ -46,6 +50,7 @@ window.addEventListener("load", () => {
       this.enemies.forEach((enemy) => {
         enemy.draw(ctx);
       });
+      this.UI.draw(ctx);
     }
     addEnemy() {
       if (this.speed > 0 && Math.random() < 0.5)
