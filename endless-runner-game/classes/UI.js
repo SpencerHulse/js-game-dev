@@ -3,6 +3,7 @@ export class UI {
     this.game = game;
     this.fontSize = 30;
     this.fontFamily = "Creepster";
+    this.livesImage = lives;
   }
   draw(context) {
     context.save();
@@ -22,6 +23,10 @@ export class UI {
       20,
       80
     );
+    // Lives
+    for (let i = 0; i < this.game.lives; i++) {
+      context.drawImage(this.livesImage, 25 * i + 20, 95, 25, 25);
+    }
     // Game Over
     if (this.game.gameOver) {
       this.game.time = this.game.maxTime;
