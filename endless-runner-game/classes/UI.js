@@ -24,6 +24,7 @@ export class UI {
     );
     // Game Over
     if (this.game.gameOver) {
+      this.game.time = this.game.maxTime;
       context.textAlign = "center";
       context.font = this.fontSize * 2 + "px " + this.fontFamily;
       if (this.game.score > (this.game.maxTime / 1000) * 0.5) {
