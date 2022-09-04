@@ -29,11 +29,21 @@ export class Background {
     this.game = game;
     this.width = 1667;
     this.height = 500;
-    this.layer1Image = layer1;
-    this.layer2Image = layer2;
-    this.layer3Image = layer3;
-    this.layer4Image = layer4;
-    this.layer5Image = layer5;
+    if (this.game.gameBackground === "forest") {
+      this.game.groundMargin = 50;
+      this.layer1Image = forestLayer1;
+      this.layer2Image = forestLayer2;
+      this.layer3Image = forestLayer3;
+      this.layer4Image = forestLayer4;
+      this.layer5Image = forestLayer5;
+    } else {
+      this.game.groundMargin = 80;
+      this.layer1Image = layer1;
+      this.layer2Image = layer2;
+      this.layer3Image = layer3;
+      this.layer4Image = layer4;
+      this.layer5Image = layer5;
+    }
     this.layer1 = new Layer(
       this.game,
       this.width,

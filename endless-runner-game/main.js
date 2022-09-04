@@ -17,6 +17,8 @@ window.addEventListener("load", () => {
       this.groundMargin = 80;
       this.speed = 0; // Three pixels per frame
       this.maxSpeed = 3;
+      // Currently, background is only manually changeable
+      this.gameBackground = "forest";
       this.background = new Background(this);
       this.player = new Player(this);
       this.input = new Input(this);
