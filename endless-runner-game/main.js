@@ -26,14 +26,16 @@ window.addEventListener("load", () => {
       this.enemies = [];
       this.particles = [];
       this.collisions = [];
+      this.floatingMessages = [];
       this.maxParticles = 200;
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.debug = false;
+      this.maxTime = 30000;
       this.score = 0;
+      this.winningScore = (this.maxTime / 1000) * 0.5;
       this.fontColor = "black";
       this.time = 0;
-      this.maxTime = 20000;
       this.gameOver = false;
       this.lives = 5;
       this.player.currentState = this.player.states[0];
@@ -53,28 +55,41 @@ window.addEventListener("load", () => {
       }
       this.enemies.forEach((enemy) => {
         enemy.update(deltaTime);
-        if (enemy.markedForDeletion)
-          this.enemies.splice(this.enemies.indexOf(enemy), 1);
+      });
+      // Handle Messages
+      this.floatingMessages.forEach((message) => {
+        message.update();
       });
       // Handle Particles
-      this.particles.forEach((particle, index) => {
+      this.particles.forEach((particle) => {
         particle.update();
-        if (particle.markedForDeletion) this.particles.splice(index, 1);
       });
       if (this.particles.length > this.maxParticles) {
         this.particles.length = this.maxParticles;
       }
       // Handle Collisions
-      this.collisions.forEach((collision, index) => {
+      this.collisions.forEach((collision) => {
         collision.update(deltaTime);
-        if (collision.markedForDeletion) this.collisions.splice(index, 1);
       });
+      this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
+      this.particles = this.particles.filter(
+        (particle) => !particle.markedForDeletion
+      );
+      this.collisions = this.collisions.filter(
+        (collision) => !collision.markedForDeletion
+      );
+      this.floatingMessages = this.floatingMessages.filter(
+        (message) => !message.markedForDeletion
+      );
     }
     draw() {
       this.background.draw(ctx);
       this.player.draw(ctx);
       this.enemies.forEach((enemy) => {
         enemy.draw(ctx);
+      });
+      this.floatingMessages.forEach((message) => {
+        message.draw(ctx);
       });
       this.particles.forEach((particle) => {
         particle.draw(ctx);
